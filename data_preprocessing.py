@@ -9,6 +9,10 @@ def get_land_size(size):
     return round(float(str(size).split()[0]), 2)
 
 
+def get_land_price(price):
+    return extract_numerical_part(price)
+
+
 def extract_numerical_part(string):
     numerical_part = "".join([char for char in string if char.isdigit()])
     if numerical_part == "":
