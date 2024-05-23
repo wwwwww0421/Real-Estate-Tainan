@@ -3,6 +3,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from data_preprocessing import (
+    get_land_size,
+    get_house_size,
+    get_house_price,
+    get_land_price,
+)
 
 # Set the title of the app
 st.title("Interactive Data Processing and Dashboard")
@@ -24,11 +30,6 @@ if land_or_house == "Land":
 if land_or_house == "House":
     data = pd.read_csv("./房地王.csv")
 
-    # if uploaded_file is not None:
-    #     # Read the data
-    #     data = pd.read_csv(uploaded_file)
-
-    # Show raw data
 st.subheader("Raw Data")
 st.write(data.head())
 
@@ -41,7 +42,7 @@ columns = st.sidebar.multiselect(
     data.columns.tolist(),
     default=data.columns.tolist(),
 )
-processed_data = data[columns]
+processed_data = data.apply()
 
 # Display processed data
 st.write("Processed Data")
