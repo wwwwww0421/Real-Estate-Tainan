@@ -63,6 +63,16 @@ def get_house_size(size):
         )
 
 
+def get_district(location):
+    if "區" in str(location):
+        if len(str(location).split("市")) == 2:
+            return str(location).split("市")[1].split("區")[0]
+        else:
+            return str(location).split("區")[0]
+    else:
+        return np.nan
+
+
 def get_lat_lon(address):
     # Initialize Nominatim API
 
@@ -99,6 +109,7 @@ def get_lat_lon(address):
 def data_processing_land(data):
     data["size"] = data["坪數"].apply(get_land_size)
     data["price"] = data["開價"].apply(extract_numerical_part)
+    data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
     return data
 
 
@@ -108,4 +119,5 @@ def data_processing_house(data):
     data["max_price"] = data.apply(lambda x: get_house_price(x["總價"])[1], axis=1)
     data["min_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[0], axis=1)
     data["max_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[1], axis=1)
+    data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
     return data
