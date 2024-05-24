@@ -55,3 +55,18 @@ def get_house_size(size):
         return extract_numerical_part(size.split("~")[0]), extract_numerical_part(
             size.split("~")[1]
         )
+
+
+def data_processing_land(data):
+    data["size"] = data["坪數"].apply(get_land_size)
+    data["price"] = data["開價"].apply(extract_numerical_part)
+    return data
+
+
+def data_processing_house(data):
+    data = data.fillna(0)
+    data["min_price"] = data.apply(lambda x: get_house_price(x["總價"])[0], axis=1)
+    data["max_price"] = data.apply(lambda x: get_house_price(x["總價"])[1], axis=1)
+    data["min_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[0], axis=1)
+    data["max_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[1], axis=1)
+    return data
