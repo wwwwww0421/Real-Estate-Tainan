@@ -40,6 +40,12 @@ columns = st.sidebar.multiselect(
     default=data.columns.tolist(),
 )
 
+district = st.selectbox("Select the district:", processed_data.district.unique())
+processed_data = processed_data[processed_data["district"] == district].reset_index(
+    drop=True
+)
+
+
 # Display processed data
 st.write("Processed Data")
 st.write(processed_data.head())
@@ -48,14 +54,15 @@ st.subheader("Average Price")
 if land_or_house == "Land":
     st.write(f'{round(processed_data["price"].mean())}K')
 
+
 if land_or_house == "House":
     col1, col2 = st.columns(2)
     with col1:
         st.write("Max Price")
-        st.write(f'{round(processed_data["max_price"].mean())}K')
+        st.write(f'{round(processed_data["max_price"].max())}K')
     with col2:
         st.write("Min Price")
-        st.write(f'{round(processed_data["min_price"].mean())}K')
+        st.write(f'{round(processed_data["min_price"].min())}K')
 
 
 # Handling missing values
@@ -77,6 +84,7 @@ if st.sidebar.checkbox("Handle Missing Values"):
     st.write("Processed Data after handling missing values")
     st.write(processed_data.head())
 
+
 # Interactive Widgets for Data Visualization
 st.subheader("Data Visualization")
 
@@ -85,32 +93,35 @@ st.sidebar.header("Scatter Plot")
 x_axis = st.sidebar.selectbox("Select X-axis", columns)
 y_axis = st.sidebar.selectbox("Select Y-axis", columns)
 if st.sidebar.button("Generate Scatter Plot"):
-    st.write(f"Scatter Plot of {x_axis} vs {y_axis}")
-    fig, ax = plt.subplots()
-    ax.scatter(processed_data[x_axis], processed_data[y_axis])
-    ax.set_xlabel(x_axis)
-    ax.set_ylabel(y_axis)
-    st.pyplot(fig)
+    pass
+    # st.write(f"Scatter Plot of {x_axis} vs {y_axis}")
+    # fig, ax = plt.subplots()
+    # ax.scatter(processed_data[x_axis], processed_data[y_axis])
+    # ax.set_xlabel(x_axis)
+    # ax.set_ylabel(y_axis)
+    # st.pyplot(fig)
 
 # Histogram
 st.sidebar.header("Histogram")
 hist_column = st.sidebar.selectbox("Select column for histogram", columns)
 if st.sidebar.button("Generate Histogram"):
-    st.write(f"Histogram of {hist_column}")
-    fig, ax = plt.subplots()
-    ax.hist(processed_data[hist_column], bins=20)
-    ax.set_xlabel(hist_column)
-    ax.set_ylabel("Frequency")
-    st.pyplot(fig)
+    pass
+    # st.write(f"Histogram of {hist_column}")
+    # fig, ax = plt.subplots()
+    # ax.hist(processed_data[hist_column], bins=20)
+    # ax.set_xlabel(hist_column)
+    # ax.set_ylabel("Frequency")
+    # st.pyplot(fig)
 
 # Correlation heatmap
 st.sidebar.header("Correlation Heatmap")
 if st.sidebar.button("Generate Correlation Heatmap"):
-    st.write("Correlation Heatmap")
-    corr = processed_data.corr()
-    fig, ax = plt.subplots()
-    sns.heatmap(corr, annot=True, ax=ax, cmap="coolwarm")
-    st.pyplot(fig)
+    pass
+    # st.write("Correlation Heatmap")
+    # corr = processed_data.corr()
+    # fig, ax = plt.subplots()
+    # sns.heatmap(corr, annot=True, ax=ax, cmap="coolwarm")
+    # st.pyplot(fig)
 
 # If no file is uploaded
 else:
