@@ -3,12 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from data_preprocessing import (
-    get_land_size,
-    get_house_size,
-    get_house_price,
-    get_land_price,
-)
+from data_preprocessing import data_processing_land, data_processing_house
 
 # Set the title of the app
 st.title("Interactive Data Processing and Dashboard")
@@ -25,10 +20,12 @@ land_or_house = st.sidebar.selectbox(
 
 if land_or_house == "Land":
     data = pd.read_csv("./台南土地.csv")
+    processed_data = data_processing_land(data)
 
 
 if land_or_house == "House":
     data = pd.read_csv("./房地王.csv")
+    processed_data = data_processing_house(data)
 
 st.subheader("Raw Data")
 st.write(data.head())
@@ -42,11 +39,24 @@ columns = st.sidebar.multiselect(
     data.columns.tolist(),
     default=data.columns.tolist(),
 )
-processed_data = data.apply()
 
 # Display processed data
 st.write("Processed Data")
 st.write(processed_data.head())
+
+st.subheader("Average Price")
+if land_or_house == "Land":
+    st.write(f'{round(processed_data["price"].mean())}K')
+
+if land_or_house == "House":
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("Max Price")
+        st.write(f'{round(processed_data["max_price"].mean())}K')
+    with col2:
+        st.write("Min Price")
+        st.write(f'{round(processed_data["min_price"].mean())}K')
+
 
 # Handling missing values
 if st.sidebar.checkbox("Handle Missing Values"):
