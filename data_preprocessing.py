@@ -3,6 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import re
 import math
+from geopy.geocoders import Nominatim
+from geopy.exc import GeocoderTimedOut, GeocoderServiceError
+import requests
+
+
+apikey = open("api_key.txt", "r")
 
 
 def get_land_size(size):
@@ -55,6 +61,39 @@ def get_house_size(size):
         return extract_numerical_part(size.split("~")[0]), extract_numerical_part(
             size.split("~")[1]
         )
+
+
+def get_lat_lon(address):
+    # Initialize Nominatim API
+
+    # Replace YOUR_API_KEY with your actual API key. Sign up and get an API key on https://www.geoapify.com/
+    API_KEY = "cf78f92dd910429c821d49d6863ef6bf"
+
+    # Build the API URL
+    url = f"https://api.geoapify.com/v1/geocode/search?text={address}&limit=1&apiKey={API_KEY}"
+
+    # Send the API request and get the response
+    response = requests.get(url)
+
+    # Check the response status code
+    if response.status_code == 200:
+        # Parse the JSON data from the response
+        data = response.json()
+        try:
+            # Extract the first result from the data
+            result = data["features"][0]
+
+            # Extract the latitude and longitude of the result
+            latitude = result["geometry"]["coordinates"][1]
+            longitude = result["geometry"]["coordinates"][0]
+
+            print(f"Latitude: {latitude}, Longitude: {longitude}")
+            return latitude, longitude
+        except:
+            return np.nan, np.nan
+    else:
+        print(f"Request failed with status code {response.status_code}")
+        return np.nan, np.nan
 
 
 def data_processing_land(data):
