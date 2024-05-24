@@ -8,6 +8,7 @@ __pycache__/
 
 # Ignore the specific Jupyter notebook file
 data_cleaning_test.ipynb
+api_key.txt
 
 # Distribution / packaging
 .Python
