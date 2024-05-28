@@ -63,12 +63,12 @@ def get_house_size(size):
         )
 
 
-def get_avg_house_price(min_price, max_price):
-    avg_price = (min_price + max_price) / 2
-    if pd.isna(avg_price) == True:
+def get_avg(mini, maxi):
+    avg = (mini + maxi) / 2
+    if pd.isna(avg) == True:
         return 0
     else:
-        return avg_price
+        return avg
 
 
 def get_district(location):
@@ -125,10 +125,9 @@ def data_processing_house(data):
     data = data.fillna(0)
     data["min_price"] = data.apply(lambda x: get_house_price(x["總價"])[0], axis=1)
     data["max_price"] = data.apply(lambda x: get_house_price(x["總價"])[1], axis=1)
-    data["avg_price"] = data.apply(
-        lambda x: get_avg_house_price(x.min_price, x.max_price), axis=1
-    )
+    data["avg_price"] = data.apply(lambda x: get_avg(x.min_price, x.max_price), axis=1)
     data["min_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[0], axis=1)
     data["max_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[1], axis=1)
+    data["avg_size"] = data.apply(lambda x: get_avg(x.min_size, x.max_size), axis=1)
     data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
     return data
