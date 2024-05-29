@@ -3,7 +3,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-from data_preprocessing import data_processing_land, data_processing_house
+import plotly.figure_factory as ff
+import plotly.express as px
+from data_preprocessing import (
+    data_processing_land,
+    data_processing_house,
+    get_plotable_range,
+)
 
 # Set the title of the app
 st.title("Interactive Data Processing and Dashboard")
@@ -26,6 +32,8 @@ if land_or_house == "Land":
 if land_or_house == "House":
     data = pd.read_csv("./房地王.csv")
     processed_data = data_processing_house(data)
+
+plotable_data = get_plotable_range(processed_data)
 
 st.subheader("Raw Data")
 st.write(data.head())
@@ -60,7 +68,7 @@ st.write(processed_data.head())
 
 st.subheader("Average Price")
 if land_or_house == "Land":
-    st.write(f'{round(processed_data["price"].mean())}K')
+    st.write(f'{round(processed_data["avg_price"].mean())}K')
 
 
 if land_or_house == "House":
@@ -127,21 +135,22 @@ if st.sidebar.button("Generate Histogram"):
 st.subheader("Map")
 
 fig = ff.create_hexbin_mapbox(
-    data_frame=plotable_house,
+    data_frame=plotable_data[plotable_data["district"] == f"{district}"],
     lat="latitude",
     lon="longitude",
-    color="min_price",
+    color="avg_price",
     min_count=1,
     nx_hexagon=50,
     opacity=0.9,
-    labels={"color": "max_price"},
+    labels={"color": "avg_price"},
     show_original_data=False,
     agg_func=np.mean,
 )
 
 fig.update_layout(mapbox_style="open-street-map")
 fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-fig.show()
+st.plotly_chart(fig)
+# fig.show()
 # if st.sidebar.button("Generate Correlation Heatmap"):
 #     pass
 # st.write("Correlation Heatmap")
