@@ -124,7 +124,24 @@ if st.sidebar.button("Generate Histogram"):
     st.pyplot(fig)
 
 # Correlation heatmap
-# st.sidebar.header("Correlation Heatmap")
+st.subheader("Map")
+
+fig = ff.create_hexbin_mapbox(
+    data_frame=plotable_house,
+    lat="latitude",
+    lon="longitude",
+    color="min_price",
+    min_count=1,
+    nx_hexagon=50,
+    opacity=0.9,
+    labels={"color": "max_price"},
+    show_original_data=False,
+    agg_func=np.mean,
+)
+
+fig.update_layout(mapbox_style="open-street-map")
+fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+fig.show()
 # if st.sidebar.button("Generate Correlation Heatmap"):
 #     pass
 # st.write("Correlation Heatmap")
@@ -134,7 +151,7 @@ if st.sidebar.button("Generate Histogram"):
 # st.pyplot(fig)
 
 # If no file is uploaded
-else:
-    st.write("Please upload a CSV file to proceed.")
+# else:
+#     st.write("Please upload a CSV file to proceed.")
 
 # Run the app: Save this script as app.py and run `streamlit run app.py` in your terminal.

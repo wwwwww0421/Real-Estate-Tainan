@@ -81,6 +81,16 @@ def get_district(location):
         return np.nan
 
 
+def get_plotable_range(data):
+    plotable_house = data[
+        (data.latitude >= 22.894)
+        & (data.latitude <= 23.412)
+        & (data.longitude >= 120.036)
+        & (data.longitude <= 120.656)
+    ]
+    return plotable_house
+
+
 def get_lat_lon(address):
     # Initialize Nominatim API
 
