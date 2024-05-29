@@ -125,8 +125,8 @@ def get_lat_lon(address):
 
 
 def data_processing_land(data):
-    data["size"] = data["坪數"].apply(get_land_size)
-    data["price"] = data["開價"].apply(extract_numerical_part)
+    data["avg_size"] = data["坪數"].apply(get_land_size)
+    data["avg_price"] = data["開價"].apply(extract_numerical_part)
     data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
     return data
 
