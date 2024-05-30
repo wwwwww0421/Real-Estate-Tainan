@@ -9,6 +9,8 @@ import requests
 
 
 apikey = open("api_key.txt", "r")
+district_string = "東區、中區、西區、南區、北區、安平區、安南區、新營區、永康區、鹽水區、白河區、麻豆區、佳里區、新化區、善化區、學甲區、柳營區、後壁區、東山區、下營區、六甲區、官田區、大內區、西港區、七股區、將軍區、北門區、新市區、安定區、山上區、玉井區、楠西區、南化區、左鎮區、仁德區、歸仁區、關廟區、龍崎區"
+district_lst = district_string.split("、")
 
 
 def get_land_size(size):
@@ -71,12 +73,16 @@ def get_avg(mini, maxi):
         return avg
 
 
+def check_string_in_list(string, lst):
+    for element in lst:
+        if element in string:
+            return element
+    return None
+
+
 def get_district(location):
     if "區" in str(location):
-        if len(str(location).split("市")) == 2:
-            return str(location).split("市")[1].split("區")[0]
-        else:
-            return str(location).split("區")[0]
+        return check_string_in_list(str(location), district_lst)
     else:
         return np.nan
 
