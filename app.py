@@ -9,6 +9,7 @@ from data_preprocessing import (
     data_processing_land,
     data_processing_house,
     get_plotable_range,
+    district_lst,
 )
 
 # Set the title of the app
@@ -25,20 +26,20 @@ land_or_house = st.sidebar.selectbox(
 # uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
 
 if land_or_house == "Land":
-    data = pd.read_csv("./台南土地.csv")
+    data = pd.read_csv("./Output/台南土地.csv")
     processed_data = data_processing_land(data)
 
 
 if land_or_house == "House":
-    data = pd.read_csv("./房地王.csv")
+    data = pd.read_csv("./Output/房地王.csv")
     processed_data = data_processing_house(data)
 
 
-st.subheader("Raw Data")
-st.write(data.head())
+# st.subheader("Raw Data")
+# st.write(data.head())
 
 # Data Processing
-st.subheader("Data Processing")
+st.subheader("Top 5 rows of Processed Data")
 
 # Selecting columns
 # columns = st.sidebar.multiselect(
@@ -47,7 +48,10 @@ st.subheader("Data Processing")
 #     default=data.columns.tolist(),
 # )
 
-district = st.selectbox("Select the district:", processed_data.district.unique())
+# print(processed_data.district.unique().tolist())
+test = processed_data[processed_data.district != 0]
+
+district = st.selectbox("Select the district:", sorted(test.district.unique()))
 processed_data = processed_data[processed_data["district"] == district].reset_index(
     drop=True
 )
@@ -68,42 +72,47 @@ st.write("Processed Data")
 st.write(processed_data.head())
 
 st.subheader("Average Price")
-if land_or_house == "Land":
-    st.write(f'{round(processed_data["avg_price"].mean())}K')
+try:
+    if land_or_house == "Land":
+        st.write(f'{round(processed_data["avg_price"].mean())}K')
 
-
-if land_or_house == "House":
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("Max Price")
-        st.write(f'{round(processed_data["max_price"].max())}K')
-    with col2:
-        st.write("Min Price")
-        st.write(f'{round(processed_data["min_price"].min())}K')
+    if land_or_house == "House":
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write("Max Price")
+            st.write(f'{round(processed_data["max_price"].max())}K')
+        with col2:
+            st.write("Min Price")
+            st.write(f'{round(processed_data["min_price"].min())}K')
+except ValueError:
+    st.markdown(
+        "<h1 style='text-align: center; color: grey;'>Oops.. No data for this district..</h1>",
+        unsafe_allow_html=True,
+    )
 
 
 # Handling missing values
-if st.sidebar.checkbox("Handle Missing Values"):
-    missing_value_strategy = st.sidebar.selectbox(
-        "Select strategy",
-        ["Drop rows", "Fill with mean", "Fill with median", "Fill with mode"],
-    )
+# if st.sidebar.checkbox("Handle Missing Values"):
+#     missing_value_strategy = st.sidebar.selectbox(
+#         "Select strategy",
+#         ["Drop rows", "Fill with mean", "Fill with median", "Fill with mode"],
+#     )
 
-    if missing_value_strategy == "Drop rows":
-        processed_data = processed_data.dropna()
-    elif missing_value_strategy == "Fill with mean":
-        processed_data = processed_data.fillna(processed_data.mean())
-    elif missing_value_strategy == "Fill with median":
-        processed_data = processed_data.fillna(processed_data.median())
-    elif missing_value_strategy == "Fill with mode":
-        processed_data = processed_data.fillna(processed_data.mode().iloc[0])
+#     if missing_value_strategy == "Drop rows":
+#         processed_data = processed_data.dropna()
+#     elif missing_value_strategy == "Fill with mean":
+#         processed_data = processed_data.fillna(processed_data.mean())
+#     elif missing_value_strategy == "Fill with median":
+#         processed_data = processed_data.fillna(processed_data.median())
+#     elif missing_value_strategy == "Fill with mode":
+#         processed_data = processed_data.fillna(processed_data.mode().iloc[0])
 
-    st.write("Processed Data after handling missing values")
-    st.write(processed_data.head())
+#     st.write("Processed Data after handling missing values")
+#     st.write(processed_data.head())
 
 
 # Interactive Widgets for Data Visualization
-st.subheader("Data Visualization")
+# st.subheader("Data Visualization")
 
 # Histogram
 st.sidebar.header("Histogram")
@@ -120,26 +129,32 @@ if st.sidebar.button("Generate Histogram"):
     st.pyplot(fig)
 
 # Correlation heatmap
-st.subheader("Map")
+st.subheader(f"{district} Map")
+try:
+    fig = ff.create_hexbin_mapbox(
+        data_frame=plotable_data[
+            (plotable_data["district"] == f"{district}")
+            & (plotable_data["avg_price"] > 0)
+        ],
+        lat="latitude",
+        lon="longitude",
+        color="avg_price",
+        min_count=1,
+        nx_hexagon=20,
+        opacity=0.9,
+        labels={"color": "avg_price"},
+        show_original_data=False,
+        agg_func=np.mean,
+    )
 
-fig = ff.create_hexbin_mapbox(
-    data_frame=plotable_data[
-        (plotable_data["district"] == f"{district}") & (plotable_data["avg_price"] > 0)
-    ],
-    lat="latitude",
-    lon="longitude",
-    color="avg_price",
-    min_count=1,
-    nx_hexagon=20,
-    opacity=0.9,
-    labels={"color": "avg_price"},
-    show_original_data=False,
-    agg_func=np.mean,
-)
-
-fig.update_layout(mapbox_style="open-street-map")
-fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-st.plotly_chart(fig)
+    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    st.plotly_chart(fig)
+except ValueError:
+    st.markdown(
+        "<h1 style='text-align: center; color: grey;'>Oops.. No data for this district..</h1>",
+        unsafe_allow_html=True,
+    )
 # fig.show()
 # if st.sidebar.button("Generate Correlation Heatmap"):
 #     pass
