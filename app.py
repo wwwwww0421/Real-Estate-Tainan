@@ -33,7 +33,6 @@ if land_or_house == "House":
     data = pd.read_csv("./房地王.csv")
     processed_data = data_processing_house(data)
 
-plotable_data = get_plotable_range(processed_data)
 
 st.subheader("Raw Data")
 st.write(data.head())
@@ -52,6 +51,8 @@ district = st.selectbox("Select the district:", processed_data.district.unique()
 processed_data = processed_data[processed_data["district"] == district].reset_index(
     drop=True
 )
+
+plotable_data = get_plotable_range(processed_data)
 
 processed_columns = [
     "min_price",
@@ -104,19 +105,6 @@ if st.sidebar.checkbox("Handle Missing Values"):
 # Interactive Widgets for Data Visualization
 st.subheader("Data Visualization")
 
-# Scatter plot
-# st.sidebar.header("Scatter Plot")
-# x_axis = st.sidebar.selectbox("Select X-axis", columns)
-# y_axis = st.sidebar.selectbox("Select Y-axis", columns)
-# if st.sidebar.button("Generate Scatter Plot"):
-#     pass
-# st.write(f"Scatter Plot of {x_axis} vs {y_axis}")
-# fig, ax = plt.subplots()
-# ax.scatter(processed_data[x_axis], processed_data[y_axis])
-# ax.set_xlabel(x_axis)
-# ax.set_ylabel(y_axis)
-# st.pyplot(fig)
-
 # Histogram
 st.sidebar.header("Histogram")
 hist_column = st.sidebar.selectbox("Select column for histogram", processed_columns)
@@ -124,7 +112,7 @@ if st.sidebar.button("Generate Histogram"):
     st.write(f"Histogram of {hist_column}")
     fig, ax = plt.subplots()
     ax.hist(
-        processed_data[processed_data["district"] == f"{district}"][hist_column],
+        processed_data[(processed_data["district"] == f"{district}")][hist_column],
         bins=20,
     )
     ax.set_xlabel(hist_column)
@@ -135,12 +123,14 @@ if st.sidebar.button("Generate Histogram"):
 st.subheader("Map")
 
 fig = ff.create_hexbin_mapbox(
-    data_frame=plotable_data[plotable_data["district"] == f"{district}"],
+    data_frame=plotable_data[
+        (plotable_data["district"] == f"{district}") & (plotable_data["avg_price"] > 0)
+    ],
     lat="latitude",
     lon="longitude",
     color="avg_price",
     min_count=1,
-    nx_hexagon=50,
+    nx_hexagon=20,
     opacity=0.9,
     labels={"color": "avg_price"},
     show_original_data=False,
