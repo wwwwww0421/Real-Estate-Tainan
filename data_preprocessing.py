@@ -138,6 +138,7 @@ def data_processing_land(data):
     data["avg_size"] = data["坪數"].apply(get_land_size)
     data["avg_price"] = data["開價"].apply(extract_numerical_part)
 
+    data = data_cleaning(data)
     return data
 
 
@@ -155,4 +156,11 @@ def data_processing_house(data):
     data = data.fillna(0)
     data["avg_size"] = data.apply(lambda x: get_avg(x.min_size, x.max_size), axis=1)
     data["avg_price"] = data.apply(lambda x: get_avg(x.min_price, x.max_price), axis=1)
+
+    data = data_cleaning(data)
+    return data
+
+
+def data_cleaning(data):
+    data = data[(data.avg_size >= 0) & (data.avg_price >= 0)].reset_index(drop=True)
     return data
