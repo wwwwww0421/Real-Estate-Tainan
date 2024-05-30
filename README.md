@@ -8,4 +8,4 @@ Generate a csv local file in the end from the Jupyter notebooks.
 
 ### To run the web app:
 
-`streamlit run app.py`
+```streamlit run app.py```
