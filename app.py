@@ -79,10 +79,16 @@ try:
     if land_or_house == "House":
         col1, col2 = st.columns(2)
         with col1:
-            st.write("Max Price")
+            st.markdown(
+                "<h3 style='text-align: center; color: white;'>Max Price</h3>",
+                unsafe_allow_html=True,
+            )
             st.write(f'{round(processed_data["max_price"].max())}K')
         with col2:
-            st.write("Min Price")
+            st.markdown(
+                "<h3 style='text-align: center; color: white;'>Min Price</h3>",
+                unsafe_allow_html=True,
+            )
             st.write(f'{round(processed_data["min_price"].min())}K')
 except ValueError:
     st.markdown(
@@ -118,15 +124,22 @@ except ValueError:
 st.sidebar.header("Histogram")
 hist_column = st.sidebar.selectbox("Select column for histogram", processed_columns)
 if st.sidebar.button("Generate Histogram"):
-    st.write(f"Histogram of {hist_column}")
-    fig, ax = plt.subplots()
-    ax.hist(
-        processed_data[(processed_data["district"] == f"{district}")][hist_column],
-        bins=20,
+    st.subheader(f"{district} Histogram")
+    # fig, ax = plt.subplots()
+    fig = px.histogram(
+        processed_data[(processed_data["district"] == f"{district}")],
+        x=hist_column,
     )
-    ax.set_xlabel(hist_column)
-    ax.set_ylabel("Frequency")
-    st.pyplot(fig)
+    fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
+    st.plotly_chart(fig)
+    # ax.hist(
+    #     processed_data[(processed_data["district"] == f"{district}")][hist_column],
+    #     bins=20,
+    # )
+    # ax.set_xlabel(hist_column)
+    # ax.set_ylabel("Frequency")
+    # st.pyplot(fig)
+
 
 # Correlation heatmap
 st.subheader(f"{district} Map")
