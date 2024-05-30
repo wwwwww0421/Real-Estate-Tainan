@@ -125,19 +125,28 @@ def get_lat_lon(address):
 
 
 def data_processing_land(data):
+
+    data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
+
+    data = data.fillna(0)
     data["avg_size"] = data["坪數"].apply(get_land_size)
     data["avg_price"] = data["開價"].apply(extract_numerical_part)
-    data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
+
     return data
 
 
 def data_processing_house(data):
+
     data = data.fillna(0)
     data["min_price"] = data.apply(lambda x: get_house_price(x["總價"])[0], axis=1)
     data["max_price"] = data.apply(lambda x: get_house_price(x["總價"])[1], axis=1)
-    data["avg_price"] = data.apply(lambda x: get_avg(x.min_price, x.max_price), axis=1)
+
     data["min_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[0], axis=1)
     data["max_size"] = data.apply(lambda x: get_house_size(x["格局/地坪"])[1], axis=1)
-    data["avg_size"] = data.apply(lambda x: get_avg(x.min_size, x.max_size), axis=1)
+
     data["district"] = data.apply(lambda x: get_district(x["位置"]), axis=1)
+
+    data = data.fillna(0)
+    data["avg_size"] = data.apply(lambda x: get_avg(x.min_size, x.max_size), axis=1)
+    data["avg_price"] = data.apply(lambda x: get_avg(x.min_price, x.max_price), axis=1)
     return data
