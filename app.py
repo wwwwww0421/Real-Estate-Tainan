@@ -74,8 +74,10 @@ st.write(processed_data.head())
 st.subheader("Average Price")
 try:
     if land_or_house == "Land":
-        st.write(f'{round(processed_data["avg_price"].mean())}K')
-
+        st.markdown(
+            f"<h3 style='text-align: center; color: yellow;'>{round(processed_data['avg_price'].mean())}K</h3>",
+            unsafe_allow_html=True,
+        )
     if land_or_house == "House":
         col1, col2 = st.columns(2)
         with col1:
@@ -83,13 +85,20 @@ try:
                 "<h3 style='text-align: center; color: white;'>Max Price</h3>",
                 unsafe_allow_html=True,
             )
-            st.write(f'{round(processed_data["max_price"].max())}K')
+            st.markdown(
+                f"<h3 style='text-align: center; color: yellow;'>{round(processed_data['max_price'].max())}K</h3>",
+                unsafe_allow_html=True,
+            )
         with col2:
             st.markdown(
                 "<h3 style='text-align: center; color: white;'>Min Price</h3>",
                 unsafe_allow_html=True,
             )
-            st.write(f'{round(processed_data["min_price"].min())}K')
+            st.markdown(
+                f"<h3 style='text-align: center; color: yellow;'>{round(processed_data[processed_data['min_price']>0]['min_price'].min())}K</h3>",
+                unsafe_allow_html=True,
+            )
+
 except ValueError:
     st.markdown(
         "<h1 style='text-align: center; color: grey;'>Oops.. No data for this district..</h1>",
@@ -153,7 +162,7 @@ try:
         lon="longitude",
         color="avg_price",
         min_count=1,
-        nx_hexagon=20,
+        nx_hexagon=50,
         opacity=0.9,
         labels={"color": "avg_price"},
         show_original_data=False,
