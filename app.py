@@ -13,7 +13,7 @@ from data_preprocessing import (
 )
 
 # Set the title of the app
-st.title("Interactive Data Processing and Dashboard")
+st.title("Tainan Real Estate Trading Dashboard")
 
 # Sidebar for user inputs
 st.sidebar.header("User Input Parameters")
@@ -39,7 +39,7 @@ if land_or_house == "House":
 # st.write(data.head())
 
 # Data Processing
-st.subheader("Top 5 rows of Processed Data")
+st.subheader("Data Preview")
 
 # Selecting columns
 # columns = st.sidebar.multiselect(
@@ -149,7 +149,14 @@ if st.sidebar.button("Generate Histogram"):
     # ax.set_ylabel("Frequency")
     # st.pyplot(fig)
 
-
+colour_scale = [
+    "#66C3F4",
+    "#3EB3F2",
+    "#0E89CB",
+    "#08527A",
+    "#063751",
+    "#031B29",
+]
 # Correlation heatmap
 st.subheader(f"{district} Map")
 try:
@@ -162,14 +169,29 @@ try:
         lon="longitude",
         color="avg_price",
         min_count=1,
-        nx_hexagon=50,
-        opacity=0.9,
+        nx_hexagon=30,
+        opacity=0.8,
         labels={"color": "avg_price"},
         show_original_data=False,
+        color_continuous_scale=colour_scale,
         agg_func=np.mean,
     )
 
-    fig.update_layout(mapbox_style="open-street-map")
+    fig.update_layout(
+        mapbox_style="open-street-map",
+        mapbox=dict(
+            layers=[
+                dict(
+                    sourcetype="raster",
+                    source=["https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                    below="traces",
+                    opacity=0.5,
+                )
+            ]
+        ),
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+    )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     st.plotly_chart(fig)
 except ValueError:
