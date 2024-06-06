@@ -35,20 +35,9 @@ if land_or_house == "House":
     processed_data = data_processing_house(data)
 
 
-# st.subheader("Raw Data")
-# st.write(data.head())
-
 # Data Processing
 st.subheader("Data Preview")
 
-# Selecting columns
-# columns = st.sidebar.multiselect(
-#     "Select columns to include",
-#     data.columns.tolist(),
-#     default=data.columns.tolist(),
-# )
-
-# print(processed_data.district.unique().tolist())
 test = processed_data[processed_data.district != 0]
 
 district = st.selectbox("Select the district:", sorted(test.district.unique()))
@@ -105,30 +94,6 @@ except ValueError:
         unsafe_allow_html=True,
     )
 
-
-# Handling missing values
-# if st.sidebar.checkbox("Handle Missing Values"):
-#     missing_value_strategy = st.sidebar.selectbox(
-#         "Select strategy",
-#         ["Drop rows", "Fill with mean", "Fill with median", "Fill with mode"],
-#     )
-
-#     if missing_value_strategy == "Drop rows":
-#         processed_data = processed_data.dropna()
-#     elif missing_value_strategy == "Fill with mean":
-#         processed_data = processed_data.fillna(processed_data.mean())
-#     elif missing_value_strategy == "Fill with median":
-#         processed_data = processed_data.fillna(processed_data.median())
-#     elif missing_value_strategy == "Fill with mode":
-#         processed_data = processed_data.fillna(processed_data.mode().iloc[0])
-
-#     st.write("Processed Data after handling missing values")
-#     st.write(processed_data.head())
-
-
-# Interactive Widgets for Data Visualization
-# st.subheader("Data Visualization")
-
 # Histogram
 st.sidebar.header("Histogram")
 hist_column = st.sidebar.selectbox("Select column for histogram", processed_columns)
@@ -141,13 +106,7 @@ if st.sidebar.button("Generate Histogram"):
     )
     fig.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
     st.plotly_chart(fig)
-    # ax.hist(
-    #     processed_data[(processed_data["district"] == f"{district}")][hist_column],
-    #     bins=20,
-    # )
-    # ax.set_xlabel(hist_column)
-    # ax.set_ylabel("Frequency")
-    # st.pyplot(fig)
+
 
 colour_scale = [
     "#66C3F4",
@@ -199,17 +158,3 @@ except ValueError:
         "<h1 style='text-align: center; color: grey;'>Oops.. No data for this district..</h1>",
         unsafe_allow_html=True,
     )
-# fig.show()
-# if st.sidebar.button("Generate Correlation Heatmap"):
-#     pass
-# st.write("Correlation Heatmap")
-# corr = processed_data.corr()
-# fig, ax = plt.subplots()
-# sns.heatmap(corr, annot=True, ax=ax, cmap="coolwarm")
-# st.pyplot(fig)
-
-# If no file is uploaded
-# else:
-#     st.write("Please upload a CSV file to proceed.")
-
-# Run the app: Save this script as app.py and run `streamlit run app.py` in your terminal.
